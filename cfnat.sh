@@ -145,6 +145,7 @@ load_config() {
         source "$CONFIG_FILE"
         echo -e "${RED}配置文件存在${NC}"
         kill $(cat "$PID_FILE")  
+        rm -f "$PID_FILE"
     else
         echo -e "${RED}配置文件不存在，无法加载${NC}"
     fi
