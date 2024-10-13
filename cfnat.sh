@@ -95,7 +95,7 @@ download_github_repo() {
             FILE_URL="https://p.goxo.us.kg/zxxc/https/raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat-linux-arm"
             ;;
         *)
-            echo -e "${RED}不支持的系统架构: $ARCH${NC}"
+            echo -e "${RED}不支持的系统架构: $ARCH，~_~我承认了，不是不支持，就是单纯懒得放链接了，去下一个方法目录里面改名cfnat就可以用了${NC}"
             exit 1
             ;;
     esac
