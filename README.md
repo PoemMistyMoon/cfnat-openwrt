@@ -28,3 +28,9 @@ CFnat-OpenWrt目仅供教育、研究和安全测试目的而设计和开发。�
 curl -fsSL https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh && chmod +x cfnat.sh && ./cfnat.sh
 ```
 剩下的不理解就一路回车就行了
+
+如果遇到SSL问题就使用下面这个（跳过证书验证，也许有风险?）
+```
+curl -fsSLk
+https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh && chmod +x cfnat.sh && ./cfnat.sh
+```
