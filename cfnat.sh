@@ -206,7 +206,7 @@ start_cfnat() {
     fi
         kill $(cat "$PID_FILE")  
         rm -f "$PID_FILE"
-    cd /root/cfnat// && nohup ./cfnat -addr "$addr:$port" -code "$code" -colo "$colo" -delay "$delay" -domain "$domain" -ipnum "$ipnum" -ips "$ips" -num "$num" -random "$random" -task "$task" -tls "$tls" > /dev/null 2>&1 &
+    cd $INSTALL_DIR && nohup ./cfnat -addr "$addr:$port" -code "$code" -colo "$colo" -delay "$delay" -domain "$domain" -ipnum "$ipnum" -ips "$ips" -num "$num" -random "$random" -task "$task" -tls "$tls" > /dev/null 2>&1 &
     echo $! > $PID_FILE
 
     sleep 2
