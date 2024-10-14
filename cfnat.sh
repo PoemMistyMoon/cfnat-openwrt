@@ -233,10 +233,17 @@ start_cfnat() {
     fi
         kill_cfnat_process  
         rm -f "$PID_FILE"
-    cd $INSTALL_DIR && nohup ./cfnat -addr "$addr:$port" -code "$code" -colo "$colo" -delay "$delay" -domain "$domain" -ipnum "$ipnum" -ips "$ips" -num "$num" -random "$random" -task "$task" -tls "$tls" > /dev/null 2>&1 &
+        cmd="cd $INSTALL_DIR && nohup ./cfnat -addr \"$addr:$port\" -code \"$code\" -delay \"$delay\" -domain \"$domain\" -ipnum \"$ipnum\" -ips \"$ips\" -num \"$num\" -random \"$random\" -task \"$task\" -tls \"$tls\""
+    
+if [ -n "$colo" ]; then
+        cmd="$cmd -colo \"$colo\""
+    fi
 
+    cmd="$cmd > /dev/null 2>&1 &"
 
-    sleep 1  
+    eval $cmd
+
+    sleep 2  
 CFNAT_PID=$(pgrep -f "./cfnat")  
 
 if [ -n "$CFNAT_PID" ]; then
