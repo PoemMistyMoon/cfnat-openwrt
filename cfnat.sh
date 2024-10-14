@@ -5,6 +5,7 @@ CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'  
 
@@ -115,11 +116,11 @@ download_necessary_files() {
 
 check_files() {
     if [ ! -f "$CFNAT_BINARY" ] || [ ! -f "$INSTALL_DIR/ips-v4.txt" ] || [ ! -f "$INSTALL_DIR/ips-v6.txt " ]; then
-        echo -e "${GREEN}未检测到主程序或必要文件，开始下载...${NC}"
+        echo -e "${YELLOW}未检测到主程序或必要文件，开始下载...${NC}"
         download_github_repo
         download_necessary_files
     else
-        echo -e "${GREEN}主程序和必要文件已存在，跳过下载${NC}"
+        echo -e "${YELLOW}主程序和必要文件已存在，跳过下载${NC}"
     fi
 }
 
@@ -137,16 +138,17 @@ save_config() {
     echo "random=$random" >> $CONFIG_FILE
     echo "task=$task" >> $CONFIG_FILE
     echo "tls=$tls" >> $CONFIG_FILE
+    echo "lanip=$lan_ip" >> $CONFIG_FILE
 }
 
 
 load_config() {
     if [ -f "$CONFIG_FILE" ]; then
         source "$CONFIG_FILE"
-        echo -e "${RED}配置文件存在${NC}"
+        echo -e "${YELLOW}配置文件存在${NC}"
         
     else
-        echo -e "${RED}配置文件不存在，无法加载${NC}"
+        echo -e "${RED}配置文件不存在，将进行安装程序${NC}"
     fi
 }
 
@@ -163,11 +165,11 @@ get_lan_ip() {
 
 start_cfnat() {
     load_config
-
+    get_lan_ip
     if [ ! -f "$CONFIG_FILE" ]; then
         addr="127.0.0.1"
 
-        echo -e "${RED}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效，回车继续${NC}"
+        echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效，回车继续${NC}"
         read -p "按回车继续... "
 
         read -p "请输入转发的目标端口 (默认: ${port:-1234}): " port
@@ -201,7 +203,6 @@ start_cfnat() {
 
         read -p "是否为 TLS 端口 (true 或 false) (默认: ${tls:-true}): " tls
         tls=${tls:-true}
-
         save_config
     fi
         kill $(cat "$PID_FILE")  
@@ -221,15 +222,58 @@ fi
 
     if ps | grep -q "[c]fnat"; then
         echo -e "${GREEN}cfnat 已启动，PID: $(cat $PID_FILE)${NC}"
-        get_lan_ip
-        echo -e "${GREEN}如果你在本机运行了代理插件，请把你的 CF 节点 IP 和端口改成：127.0.0.1:$port，如果你在其他设备运行代理插件，请把你的 CF 节点 IP 和端口改成：$lan_ip:$port${NC}"
+         echo "LAN 口的 IPv4 地址: $lan_ip"
+         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 和端口改成：127.0.0.1:$port${NC}"
+         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 和端口改成：$lan_ip:$port${NC}"
+         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
     else
         echo -e "${RED}cfnat 启动失败，请检查配置或重试${NC}"
     fi
 }
 
+show_current_config() {
+    echo "========================"
+    echo -e "${GREEN}当前配置:${NC}"
+    
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo -e "${RED}未安装: 配置文件不存在${NC}"
+    else
+        source "$CONFIG_FILE"
+        echo -e "${GREEN}配置文件内容:${NC}"
+        echo "监听地址 (addr): 127.0.0.1"
+        echo "端口 (port): $port"
+        echo "HTTP/HTTPS 响应状态码 (code): $code"
+        echo "筛选数据中心 (colo): ${colo:-未设置}"
+        echo "有效延迟 (delay): $delay"
+        echo "响应状态码检查的域名 (domain): $domain"
+        echo "提取的有效IP数量 (ipnum): $ipnum"
+        echo "生成 IPv4 或 IPv6 地址 (ips): $ips"
+        echo "目标负载 IP 数量 (num): $num"
+        echo "是否随机生成IP (random): $random"
+        echo "并发请求最大协程数 (task): $task"
+        echo "是否为 TLS 端口 (tls): $tls"
+        echo "LAN 连接地址: $lanip:$port"
+        echo "========================"
+        
+    fi
 
+    # Check if cfnat is running
+    if pgrep -f "./cfnat" > /dev/null; then
+        echo -e "${GREEN}cfnat 正在运行${NC}"
+         echo "========================"
+        echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$port${NC}"
+        echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$port${NC}"
+        echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
+    else
+        echo -e "${RED}cfnat 未运行${NC}"
+    fi
+}
+
+# Main menu
 main_menu() {
+    # Show current config and status on the main screen
+    show_current_config
+
     echo "========================"
     echo -e "${GREEN}本脚本作者：CM群里面的某人${NC}"
     echo "========================"
@@ -237,8 +281,9 @@ main_menu() {
     echo "2. 安装 cfnat"
     echo "3. 修改参数"
     echo "4. 卸载 cfnat"
-    echo "请选择一个选项 [1-4]: "
-    
+    echo "0. 退出脚本"
+    echo "请选择一个选项 [0-4]: "
+
     read choice
     case $choice in
         1)
@@ -254,6 +299,10 @@ main_menu() {
             ;;
         4)
             uninstall
+            ;;
+        0)
+            echo -e "${GREEN}退出脚本${NC}"
+            exit 0
             ;;
         *)
             echo -e "${RED}无效选项${NC}"
