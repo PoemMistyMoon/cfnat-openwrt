@@ -38,7 +38,11 @@ curl -fsSL https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cf
 ```
 curl -fsSLk https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh && chmod +x cfnat.sh && ./cfnat.sh
 ```
-### 安装后快速打开
+### 安装后打开主菜单
 ```
 bash cfnat.sh
+```
+### 安装后直接启动
+```
+bash cfnat.sh start
 ```
