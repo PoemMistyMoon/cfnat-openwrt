@@ -24,7 +24,7 @@ modify_config() {
     read -p "请输入 HTTP/HTTPS 响应状态码 (当前: ${code:-200}): " code
     code=${code:-200}
 
-    read -p "请输入筛选数据中心 (当前: ${colo}): " colo
+    read -p "请输入筛选数据中心 (当前: ${colo}，大写三字码，多个数据中心用逗号隔开,留空则忽略匹配): " colo
 
     read -p "请输入有效延迟（毫秒）(当前: ${delay:-300}): " delay
     delay=${delay:-300}
@@ -177,7 +177,7 @@ start_cfnat() {
         read -p "请输入 HTTP/HTTPS 响应状态码 (默认: ${code:-200}): " code
         code=${code:-200}
 
-        read -p "请输入筛选数据中心 (默认: ${colo}): " colo
+        read -p "请输入筛选数据中心 (默认: ${colo},大写三字码，多个数据中心用逗号隔开,留空则忽略匹配): " colo
 
         read -p "请输入有效延迟（毫秒）(默认: ${delay:-300}): " delay
         delay=${delay:-300}
