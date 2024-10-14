@@ -144,8 +144,7 @@ load_config() {
     if [ -f "$CONFIG_FILE" ]; then
         source "$CONFIG_FILE"
         echo -e "${RED}配置文件存在${NC}"
-        kill $(cat "$PID_FILE")  
-        rm -f "$PID_FILE"
+        
     else
         echo -e "${RED}配置文件不存在，无法加载${NC}"
     fi
@@ -205,7 +204,8 @@ start_cfnat() {
 
         save_config
     fi
-
+        kill $(cat "$PID_FILE")  
+        rm -f "$PID_FILE"
     cd /root/cfnat// && nohup ./cfnat -addr "$addr:$port" -code "$code" -colo "$colo" -delay "$delay" -domain "$domain" -ipnum "$ipnum" -ips "$ips" -num "$num" -random "$random" -task "$task" -tls "$tls" > /dev/null 2>&1 &
     echo $! > $PID_FILE
 
