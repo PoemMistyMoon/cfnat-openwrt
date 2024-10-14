@@ -50,8 +50,8 @@ modify_config() {
 
     echo -e "${GREEN}请修改以下配置（按回车使用当前值）：${NC}"
 
-    read -p "请输入转发的目标端口 (默认: 1234, 当前: ${port:-1234}): " new_port
-    port=${new_port:-${port:-1234}}
+    read -p "请输入转发的目标端口 (默认: 1234, 当前: ${lport:-1234}): " new_lport
+    lport=${new_lport:-${lport:-1234}}
 
     read -p "请输入转发端口 (默认: 443, 当前: ${forward_port:-443}): " new_forward_port
     forward_port=${new_forward_port:-${forward_port:-443}}
@@ -157,7 +157,7 @@ check_files() {
 
 save_config() {
     echo "addr=127.0.0.1" > $CONFIG_FILE  
-    echo "port=$lport" >> $CONFIG_FILE
+    echo "lport=$lport" >> $CONFIG_FILE
     echo "forward_port=$forward_port" >> $CONFIG_FILE
     echo "code=$code" >> $CONFIG_FILE
     echo "colo=$colo" >> $CONFIG_FILE
@@ -201,8 +201,8 @@ start_cfnat() {
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效，回车继续${NC}"
         read -p "按回车继续... "
 
-        read -p "请输入转发的目标端口 (默认: ${port:-1234}): " port
-        port=${port:-1234}
+        read -p "请输入转发的目标端口 (默认: ${lport:-1234}): " lport
+        lport=${lport:-1234}
 
         read -p "请输入转发端口 (默认: ${forward_port:-443}): " forward_port
         forward_port=${forward_port:-443}
@@ -281,8 +281,8 @@ show_current_config() {
         source "$CONFIG_FILE"
         echo -e "${GREEN}已安装：配置文件内容:${NC}"
         echo "监听地址 (addr): 127.0.0.1"
-        echo "监听端口 (port): $lport"
-        echo "转发端口: $forward_port"
+        echo "监听端口 (lport): $lport"
+        echo "转发端口 (forward_port): $forward_port"
         echo "HTTP/HTTPS 响应状态码 (code): $code"
         echo "筛选数据中心 (colo): ${colo:-未设置}"
         echo "有效延迟 (delay): $delay"
