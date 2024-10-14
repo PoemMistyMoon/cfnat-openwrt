@@ -50,39 +50,40 @@ modify_config() {
 
     echo -e "${GREEN}请修改以下配置（按回车使用当前值）：${NC}"
 
-    read -p "请输入转发的目标端口 (当前: ${port:-1234}): " port
-    port=${port:-1234}
+    read -p "请输入转发的目标端口 (默认: 1234, 当前: ${port:-1234}): " new_port
+    port=${new_port:-${port:-1234}}
 
-    read -p "请输入 HTTP/HTTPS 响应状态码 (当前: ${code:-200}): " code
-    code=${code:-200}
+    read -p "请输入 HTTP/HTTPS 响应状态码 (默认: 200, 当前: ${code:-200}): " new_code
+    code=${new_code:-${code:-200}}
 
-    read -p "请输入筛选数据中心 (当前: ${colo}，大写三字码，多个数据中心用逗号隔开,留空则忽略匹配): " colo
+    read -p "请输入筛选数据中心 (默认: 留空,机场三字码，多个数据中心用逗号隔开,留空则忽略匹配,当前: ${colo}): " new_colo
+    colo=${new_colo:-$colo}
 
-    read -p "请输入有效延迟（毫秒）(当前: ${delay:-300}): " delay
-    delay=${delay:-300}
+    read -p "请输入有效延迟（毫秒）(默认: 300, 当前: ${delay:-300}): " new_delay
+    delay=${new_delay:-${delay:-300}}
 
-    read -p "请输入响应状态码检查的域名 (当前: ${domain:-cloudflaremirrors.com/debian}): " domain
-    domain=${domain:-"cloudflaremirrors.com/debian"}
+    read -p "请输入响应状态码检查的域名 (默认: cloudflaremirrors.com/debian, 当前: ${domain:-cloudflaremirrors.com/debian}): " new_domain
+    domain=${new_domain:-${domain:-cloudflaremirrors.com/debian}}
 
-    read -p "请输入提取的有效IP数量 (当前: ${ipnum:-20}): " ipnum
-    ipnum=${ipnum:-20}
+    read -p "请输入提取的有效IP数量 (默认: 20, 当前: ${ipnum:-20}): " new_ipnum
+    ipnum=${new_ipnum:-${ipnum:-20}}
 
-    read -p "请输入生成 IPv4 或 IPv6 地址 (4或6) (当前: ${ips:-4}): " ips
-    ips=${ips:-4}
+    read -p "请输入生成 IPv4 或 IPv6 地址 (4或6) (默认: 4, 当前: ${ips:-4}): " new_ips
+    ips=${new_ips:-${ips:-4}}
 
-    read -p "请输入目标负载 IP 数量 (当前: ${num:-10}): " num
-    num=${num:-10}
+    read -p "请输入目标负载 IP 数量 (默认: 10, 当前: ${num:-10}): " new_num
+    num=${new_num:-${num:-10}}
 
-    read -p "是否随机生成IP (true 或 false) (当前: ${random:-true}): " random
-    random=${random:-true}
+    read -p "是否随机生成IP (true 或 false) (默认: true, 当前: ${random:-true}): " new_random
+    random=${new_random:-${random:-true}}
 
-    read -p "请输入并发请求最大协程数 (当前: ${task:-100}): " task
-    task=${task:-100}
+    read -p "请输入并发请求最大协程数 (默认: 100, 当前: ${task:-100}): " new_task
+    task=${new_task:-${task:-100}}
 
-    read -p "是否为 TLS 端口 (true 或 false) (当前: ${tls:-true}): " tls
-    tls=${tls:-true}
+    read -p "是否为 TLS 端口 (true 或 false) (默认: true, 当前: ${tls:-true}): " new_tls
+    tls=${new_tls:-${tls:-true}}
 
-    save_config 
+    save_config  
 
     start_cfnat  
 }
@@ -164,7 +165,6 @@ save_config() {
     echo "random=$random" >> $CONFIG_FILE
     echo "task=$task" >> $CONFIG_FILE
     echo "tls=$tls" >> $CONFIG_FILE
-    echo "lanip=$lan_ip" >> $CONFIG_FILE
 }
 
 
@@ -188,10 +188,9 @@ get_lan_ip() {
         echo "LAN 口的 IPv4 地址: $lan_ip"
     fi
 }
-
 start_cfnat() {
-    load_config
     get_lan_ip
+    load_config
     if [ ! -f "$CONFIG_FILE" ]; then
         addr="127.0.0.1"
 
@@ -204,7 +203,7 @@ start_cfnat() {
         read -p "请输入 HTTP/HTTPS 响应状态码 (默认: ${code:-200}): " code
         code=${code:-200}
 
-        read -p "请输入筛选数据中心 (默认: ${colo},大写三字码，多个数据中心用逗号隔开,留空则忽略匹配): " colo
+        read -p "请输入筛选数据中心 (默认: ${colo},机场三字码，多个数据中心用逗号隔开,留空则忽略匹配): " colo
 
         read -p "请输入有效延迟（毫秒）(默认: ${delay:-300}): " delay
         delay=${delay:-300}
@@ -256,6 +255,7 @@ fi
     if ps | grep -q "[c]fnat"; then
         echo -e "${GREEN}cfnat 已启动，PID: $(cat $PID_FILE)${NC}"
          echo "LAN 口的 IPv4 地址: $lan_ip"
+         echo "lanip=$lan_ip" >> $CONFIG_FILE
          echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 和端口改成：127.0.0.1:$port${NC}"
          echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 和端口改成：$lan_ip:$port${NC}"
          echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
