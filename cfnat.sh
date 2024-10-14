@@ -209,7 +209,15 @@ start_cfnat() {
     cd $INSTALL_DIR && nohup ./cfnat -addr "$addr:$port" -code "$code" -colo "$colo" -delay "$delay" -domain "$domain" -ipnum "$ipnum" -ips "$ips" -num "$num" -random "$random" -task "$task" -tls "$tls" > /dev/null 2>&1 &
     echo $! > $PID_FILE
 
-    sleep 2
+    sleep 1  
+CFNAT_PID=$(pgrep -f "./cfnat")  
+
+if [ -n "$CFNAT_PID" ]; then
+    echo $CFNAT_PID > $PID_FILE  
+else
+    echo "未能启动cfnat或获取PID，检查进程。" >&2
+    exit 1
+fi
 
     if ps | grep -q "[c]fnat"; then
         echo -e "${GREEN}cfnat 已启动，PID: $(cat $PID_FILE)${NC}"
