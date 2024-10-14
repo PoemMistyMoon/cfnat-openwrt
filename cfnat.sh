@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INSTALL_DIR="/root/cfnat"
+INSTALL_DIR="/root/cfnatop"
 CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
