@@ -300,7 +300,8 @@ show_current_config() {
 
 main_menu() {
     show_current_config
-
+    echo "========================"
+    echo -e "${GREEN}脚本作者：PoemMistyMoon${NC}"
     echo "========================"
     echo "1. 启动 cfnat"
     echo "2. 安装 cfnat"
