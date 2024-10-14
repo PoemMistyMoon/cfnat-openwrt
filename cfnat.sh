@@ -4,6 +4,7 @@ INSTALL_DIR="/root/cfnatop"
 CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
+RC_LOCAL_FILE="/etc/rc.local"  
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -14,8 +15,31 @@ if [ ! -d "$INSTALL_DIR" ]; then
     mkdir -p "$INSTALL_DIR"
 fi
 
+
+enable_autostart() {
+    if ! grep -q "bash /root/cfnat.sh start" "$RC_LOCAL_FILE"; then
+        sed -i '$i (sleep 60; bash /root/cfnat.sh start &) \n' "$RC_LOCAL_FILE"
+        echo -e "${GREEN}已启用开机自启，并延迟 60 秒启动${NC}"
+    else
+        echo -e "${YELLOW}开机自启已处于启用状态${NC}"
+    fi
+}
+
+disable_autostart() {
+    sed -i "/sleep 60; bash \/root\/cfnat.sh start/d" "$RC_LOCAL_FILE"
+    echo -e "${GREEN}已禁用开机自启${NC}"
+}
+
+show_autostart_status() {
+    if grep -q "bash /root/cfnat.sh start" "$RC_LOCAL_FILE"; then
+        echo -e "${GREEN}开机自启已启用${NC}"
+    else
+        echo -e "${RED}开机自启未启用${NC}"
+    fi
+}
+
 modify_config() {
-    load_config  #
+    load_config  
 
     echo -e "${GREEN}请修改以下配置（按回车使用当前值）：${NC}"
 
@@ -256,6 +280,7 @@ show_current_config() {
     if pgrep -f "./cfnat" > /dev/null; then
         CFNAT_PID=$(pgrep -f "./cfnat") 
         echo -e "${GREEN}cfnat 正在运行，PID: $CFNAT_PID${NC}"
+        show_autostart_status 
         echo "========================"
         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$port${NC}"
         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$port${NC}"
@@ -267,19 +292,18 @@ show_current_config() {
 
 
 main_menu() {
-
     show_current_config
 
-    echo "========================"
-    echo -e "${GREEN}本脚本作者：CM群里面的某人${NC}"
     echo "========================"
     echo "1. 启动 cfnat"
     echo "2. 安装 cfnat"
     echo "3. 修改参数"
     echo "4. 卸载 cfnat"
     echo "5. 停止 cfnat"
+    echo "6. 启用开机自启"
+    echo "7. 禁用开机自启"
     echo "0. 退出脚本"
-    echo "请选择一个选项 [0-5]: "
+    echo "请选择一个选项 [0-7]: "
 
     read choice
     case $choice in
@@ -299,6 +323,12 @@ main_menu() {
             ;;
         5)
             kill_cfnat_process
+            ;;
+        6)
+            enable_autostart
+            ;;
+        7)
+            disable_autostart
             ;;
         0)
             echo -e "${GREEN}退出脚本${NC}"
@@ -338,4 +368,11 @@ kill_cfnat_process() {
     fi
 }
 
-main_menu
+
+
+if [ "$1" == "start" ]; then
+    check_files
+    start_cfnat
+else
+    main_menu
+fi
