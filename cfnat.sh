@@ -145,7 +145,7 @@ download_necessary_files() {
 }
 
 check_files() {
-    if [ ! -f "$CFNAT_BINARY" ] || [ ! -f "$INSTALL_DIR/ips-v4.txt" ] || [ ! -f "$INSTALL_DIR/ips-v6.txt " ]; then
+    if [ ! -f "$CFNAT_BINARY" ] || [ ! -f "$INSTALL_DIR/ips-v4.txt" ] || [ ! -f "$INSTALL_DIR/ips-v6.txt" ]; then
         echo -e "${YELLOW}未检测到主程序或必要文件，开始下载...${NC}"
         download_github_repo
         download_necessary_files
