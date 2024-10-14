@@ -53,11 +53,6 @@ modify_config() {
 
     save_config 
 
-    if [ -f "$PID_FILE" ]; then
-        kill $(cat "$PID_FILE") 
-        rm -f "$PID_FILE"
-    fi
-
     start_cfnat  
 }
 
@@ -205,10 +200,10 @@ start_cfnat() {
         tls=${tls:-true}
         save_config
     fi
-        kill $(cat "$PID_FILE")  
+        kill_cfnat_process  
         rm -f "$PID_FILE"
     cd $INSTALL_DIR && nohup ./cfnat -addr "$addr:$port" -code "$code" -colo "$colo" -delay "$delay" -domain "$domain" -ipnum "$ipnum" -ips "$ips" -num "$num" -random "$random" -task "$task" -tls "$tls" > /dev/null 2>&1 &
-    echo $! > $PID_FILE
+
 
     sleep 1  
 CFNAT_PID=$(pgrep -f "./cfnat")  
@@ -239,7 +234,7 @@ show_current_config() {
         echo -e "${RED}未安装: 配置文件不存在${NC}"
     else
         source "$CONFIG_FILE"
-        echo -e "${GREEN}配置文件内容:${NC}"
+        echo -e "${GREEN}已安装：配置文件内容:${NC}"
         echo "监听地址 (addr): 127.0.0.1"
         echo "端口 (port): $port"
         echo "HTTP/HTTPS 响应状态码 (code): $code"
@@ -257,10 +252,11 @@ show_current_config() {
         
     fi
 
-    # Check if cfnat is running
+
     if pgrep -f "./cfnat" > /dev/null; then
-        echo -e "${GREEN}cfnat 正在运行${NC}"
-         echo "========================"
+        CFNAT_PID=$(pgrep -f "./cfnat") 
+        echo -e "${GREEN}cfnat 正在运行，PID: $CFNAT_PID${NC}"
+        echo "========================"
         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$port${NC}"
         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$port${NC}"
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
@@ -269,9 +265,9 @@ show_current_config() {
     fi
 }
 
-# Main menu
+
 main_menu() {
-    # Show current config and status on the main screen
+
     show_current_config
 
     echo "========================"
@@ -281,8 +277,9 @@ main_menu() {
     echo "2. 安装 cfnat"
     echo "3. 修改参数"
     echo "4. 卸载 cfnat"
+    echo "5. 停止 cfnat"
     echo "0. 退出脚本"
-    echo "请选择一个选项 [0-4]: "
+    echo "请选择一个选项 [0-5]: "
 
     read choice
     case $choice in
@@ -299,6 +296,9 @@ main_menu() {
             ;;
         4)
             uninstall
+            ;;
+        5)
+            kill_cfnat_process
             ;;
         0)
             echo -e "${GREEN}退出脚本${NC}"
@@ -317,5 +317,25 @@ uninstall() {
     echo -e "${GREEN}卸载成功${NC}"
 }
 
+kill_cfnat_process() {
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
+        if kill -0 "$PID" > /dev/null 2>&1; then
+            kill "$PID"
+            rm -f "$PID_FILE"
+            echo -e "${YELLOW}停止正在运行的cfnat${NC}"
+        else
+            echo -e "${RED}没有找到运行中的 cfnat 进程跳过本操作${NC}"
+        fi
+    else
+        CFNAT_PID=$(pgrep -f "./cfnat")
+        if [ -n "$CFNAT_PID" ]; then
+            kill "$CFNAT_PID"
+            echo -e "${YELLOW}停止正在运行的cfnat${NC}"
+        else
+            echo -e "${RED}没有找到运行中的 cfnat 进程跳过本操作${NC}"
+        fi
+    fi
+}
 
 main_menu
