@@ -3,7 +3,7 @@
 
 CFNAT 是一款自动查找并优化 Cloudflare IP 转发的工具，旨在**解决泛播 IP 路由不稳定的问题**。如果你曾找到过速度不错的 Cloudflare IP，CFNAT 能帮助你快速筛选出最佳 IP 并实现端口转发，从而提升网络使用体验。因此，这款工具对于**移动、广电网络用户来说尤为明显**！
 
-Telegram交流群：[@CMLiussss](https://t.me/CMLiussss)，我只是群里的不知名人物，好吧，这个readme也是cm那里搬的，懒得写了
+Telegram交流群：[@CMLiussss](https://t.me/CMLiussss)，我只是群里的不知名人物，这个readme是cm的[CFnat-Windows-GUI](https://github.com/cmliu/CFnat-Windows-GUI)那里搬的，要打的字太多了，属实懒得写了
 
 # 免责声明
 CFnat-OpenWrt目仅供教育、研究和安全测试目的而设计和开发。本项目旨在为安全研究人员、学术界人士及技术爱好者提供一个探索和实践网络通信技术的工具。
