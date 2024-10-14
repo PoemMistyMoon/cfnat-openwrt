@@ -24,7 +24,8 @@ CFnat-OpenWrt目仅供教育、研究和安全测试目的而设计和开发。�
 ---
 ### 脚本主菜单
 
-![image](https://github.com/user-attachments/assets/16954fa3-df77-4f24-9bda-ffad83d01510)
+![image](https://github.com/user-attachments/assets/77d3c31c-b21d-4969-aaa6-c254af3d694b)
+
 
 ---
 ### 使用方法
