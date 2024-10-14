@@ -5,6 +5,7 @@ CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
 RC_LOCAL_FILE="/etc/rc.local"  
+SCRIPT_PATH=$(readlink -f "$0")
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -16,8 +17,10 @@ if [ ! -d "$INSTALL_DIR" ]; then
 fi
 
 
+
+
 enable_autostart() {
-    if ! grep -q "bash /root/cfnat.sh start" "$RC_LOCAL_FILE"; then
+    if ! grep -q "bash $SCRIPT_PATH" "$RC_LOCAL_FILE"; then
         sed -i '$i (sleep 60; bash /root/cfnat.sh start &) \n' "$RC_LOCAL_FILE"
         echo -e "${GREEN}已启用开机自启，并延迟 60 秒启动${NC}"
     else
@@ -25,18 +28,22 @@ enable_autostart() {
     fi
 }
 
+
 disable_autostart() {
-    sed -i "/sleep 60; bash \/root\/cfnat.sh start/d" "$RC_LOCAL_FILE"
+    sed -i "\#sleep 60; bash $SCRIPT_PATH start#d" "$RC_LOCAL_FILE"
     echo -e "${GREEN}已禁用开机自启${NC}"
 }
 
+
 show_autostart_status() {
-    if grep -q "bash /root/cfnat.sh start" "$RC_LOCAL_FILE"; then
+
+if grep -q "bash $SCRIPT_PATH start" "$RC_LOCAL_FILE"; then
         echo -e "${GREEN}开机自启已启用${NC}"
     else
         echo -e "${RED}开机自启未启用${NC}"
     fi
 }
+
 
 modify_config() {
     load_config  
