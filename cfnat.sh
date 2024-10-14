@@ -53,6 +53,9 @@ modify_config() {
     read -p "请输入转发的目标端口 (默认: 1234, 当前: ${port:-1234}): " new_port
     port=${new_port:-${port:-1234}}
 
+    read -p "请输入转发端口 (默认: 443, 当前: ${forward_port:-443}): " new_forward_port
+    forward_port=${new_forward_port:-${forward_port:-443}}
+
     read -p "请输入 HTTP/HTTPS 响应状态码 (默认: 200, 当前: ${code:-200}): " new_code
     code=${new_code:-${code:-200}}
 
@@ -154,7 +157,8 @@ check_files() {
 
 save_config() {
     echo "addr=127.0.0.1" > $CONFIG_FILE  
-    echo "port=$port" >> $CONFIG_FILE
+    echo "port=$lport" >> $CONFIG_FILE
+    echo "forward_port=$forward_port" >> $CONFIG_FILE
     echo "code=$code" >> $CONFIG_FILE
     echo "colo=$colo" >> $CONFIG_FILE
     echo "delay=$delay" >> $CONFIG_FILE
@@ -171,7 +175,7 @@ save_config() {
 load_config() {
     if [ -f "$CONFIG_FILE" ]; then
         source "$CONFIG_FILE"
-        echo -e "${YELLOW}配置文件存在${NC}"
+        echo -e "${YELLOW}正在读取配置文件...${NC}"
         
     else
         echo -e "${RED}配置文件不存在，将进行安装程序${NC}"
@@ -199,6 +203,9 @@ start_cfnat() {
 
         read -p "请输入转发的目标端口 (默认: ${port:-1234}): " port
         port=${port:-1234}
+
+        read -p "请输入转发端口 (默认: ${forward_port:-443}): " forward_port
+        forward_port=${forward_port:-443}
 
         read -p "请输入 HTTP/HTTPS 响应状态码 (默认: ${code:-200}): " code
         code=${code:-200}
@@ -232,7 +239,7 @@ start_cfnat() {
     fi
         kill_cfnat_process  
         rm -f "$PID_FILE"
-        cmd="cd $INSTALL_DIR && nohup ./cfnat -addr \"$addr:$port\" -code \"$code\" -delay \"$delay\" -domain \"$domain\" -ipnum \"$ipnum\" -ips \"$ips\" -num \"$num\" -random \"$random\" -task \"$task\" -tls \"$tls\""
+        cmd="cd $INSTALL_DIR && nohup ./cfnat -addr \"$addr:$lport\" -code \"$code\" -delay \"$delay\" -domain \"$domain\" -ipnum \"$ipnum\" -ips \"$ips\" -num \"$num\" -random \"$random\" -task \"$task\" -tls \"$tls\" -port \"$forward_port\""
     
 if [ -n "$colo" ]; then
         cmd="$cmd -colo \"$colo\""
@@ -256,8 +263,8 @@ fi
         echo -e "${GREEN}cfnat 已启动，PID: $(cat $PID_FILE)${NC}"
          echo "LAN 口的 IPv4 地址: $lan_ip"
          echo "lanip=$lan_ip" >> $CONFIG_FILE
-         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 和端口改成：127.0.0.1:$port${NC}"
-         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 和端口改成：$lan_ip:$port${NC}"
+         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 和端口改成：127.0.0.1:$lport${NC}"
+         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 和端口改成：$lan_ip:$lport${NC}"
          echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
     else
         echo -e "${RED}cfnat 启动失败，请检查配置或重试${NC}"
@@ -274,7 +281,8 @@ show_current_config() {
         source "$CONFIG_FILE"
         echo -e "${GREEN}已安装：配置文件内容:${NC}"
         echo "监听地址 (addr): 127.0.0.1"
-        echo "端口 (port): $port"
+        echo "监听端口 (port): $lport"
+        echo "转发端口: $forward_port"
         echo "HTTP/HTTPS 响应状态码 (code): $code"
         echo "筛选数据中心 (colo): ${colo:-未设置}"
         echo "有效延迟 (delay): $delay"
@@ -285,7 +293,7 @@ show_current_config() {
         echo "是否随机生成IP (random): $random"
         echo "并发请求最大协程数 (task): $task"
         echo "是否为 TLS 端口 (tls): $tls"
-        echo "LAN 连接地址: $lanip:$port"
+        echo "LAN 连接地址: $lanip:$lport"
         echo "========================"
         
     fi
@@ -296,8 +304,8 @@ show_current_config() {
         echo -e "${GREEN}cfnat 正在运行，PID: $CFNAT_PID${NC}"
         show_autostart_status 
         echo "========================"
-        echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$port${NC}"
-        echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$port${NC}"
+        echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$lport${NC}"
+        echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$lport${NC}"
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
     else
         echo -e "${RED}cfnat 未运行${NC}"
