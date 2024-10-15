@@ -139,8 +139,8 @@ download_github_repo() {
 
 download_necessary_files() {
     download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v4.txt" "$INSTALL_DIR/ips-v4.txt"
-    download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v6.txt" "$INSTALL_DIR/ips-v6.txt"  
-    download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/locations.json" "$INSTALL_DIR/locations.json"      
+    download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v6.txt" "$INSTALL_DIR/ips-v6.txt"
+    download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/locations.json" "$INSTALL_DIR/locations.json"
     echo -e "${GREEN}必要的文件下载成功${NC}"
 }
 
@@ -325,8 +325,9 @@ main_menu() {
     echo "5. 停止 cfnat"
     echo "6. 启用开机自启"
     echo "7. 禁用开机自启"
+    echo "8. 恢复默认配置"
     echo "0. 退出脚本"
-    echo "请选择一个选项 [0-7]: "
+    echo "请选择一个选项 [0-8]: "
 
     read choice
     case $choice in
@@ -353,12 +354,22 @@ main_menu() {
         7)
             disable_autostart
             ;;
+        8)
+            if [ -f "$CONFIG_FILE" ]; then
+             rm -r "$CONFIG_FILE"
+             echo -e "${GREEN}已清空配置文件，即将重新安装${NC}"
+            fi
+            sleep 1
+            check_files
+            start_cfnat
         0)
             echo -e "${GREEN}退出脚本${NC}"
             exit 0
             ;;
         *)
-            echo -e "${RED}无效选项${NC}"
+            echo -e "${RED}无效选项,即将返回主菜单${NC}"
+            sleep 2
+            main_menu
             ;;
     esac
 }
