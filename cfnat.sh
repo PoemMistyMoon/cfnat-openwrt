@@ -358,11 +358,15 @@ main_menu() {
             if [ -f "$CONFIG_FILE" ]; then
              rm -r "$CONFIG_FILE"
              echo -e "${GREEN}已清空配置文件，即将重新安装${NC}"
-            fi
-            sleep 1
+             sleep 1
             check_files
             start_cfnat
-            ;;
+          else
+          echo -e "${RED}似乎没有检测到配置文件，代表着你可能还没安装呢,即将返回主菜单${NC}"
+            sleep 2
+            main_menu
+            fi
+             ;;
         0)
             echo -e "${GREEN}退出脚本${NC}"
             exit 0
