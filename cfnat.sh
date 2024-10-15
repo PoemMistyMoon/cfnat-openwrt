@@ -362,6 +362,7 @@ main_menu() {
             sleep 1
             check_files
             start_cfnat
+            ;;
         0)
             echo -e "${GREEN}退出脚本${NC}"
             exit 0
