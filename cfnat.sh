@@ -355,12 +355,15 @@ main_menu() {
             ;;
         5)
             kill_cfnat_process
+            main_menu
             ;;
         6)
             enable_autostart
+            main_menu
             ;;
         7)
             disable_autostart
+            main_menu
             ;;
         8)
             if [ -f "$CONFIG_FILE" ]; then
