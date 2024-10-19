@@ -360,6 +360,7 @@ main_menu() {
             ;;
         5)
             kill_cfnat_process
+            sleep 1
             main_menu
             ;;
         6)
@@ -379,7 +380,7 @@ main_menu() {
             start_cfnat
           else
           echo -e "${RED}似乎没有检测到配置文件，代表着你可能还没安装呢,即将返回主菜单${NC}"
-            sleep 2
+            sleep 1
             main_menu
             fi
              ;;
@@ -389,7 +390,7 @@ main_menu() {
             ;;
         *)
             echo -e "${RED}无效选项,即将返回主菜单${NC}"
-            sleep 2
+            sleep 1
             main_menu
             ;;
     esac
