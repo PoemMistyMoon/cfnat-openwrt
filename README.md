@@ -40,6 +40,10 @@ curl -fsSL https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cf
 ```
 curl -fsSLk https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh && chmod +x cfnat.sh && ./cfnat.sh
 ```
+都不行就用镜像地址(cloudflare)
+```
+curl -fsSLk https://p.goxo.us.kg/zxxc/https/raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh && chmod +x cfnat.sh && ./cfnat.sh
+```
 ### 安装后打开主菜单
 ```
 bash cfnat.sh
