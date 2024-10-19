@@ -342,16 +342,20 @@ main_menu() {
         1)
             check_files
             start_cfnat
+            exit 0
             ;;
         2)
             check_files
             start_cfnat
+            exit 0
             ;;
         3)
             modify_config
+            exit 0
             ;;
         4)
             uninstall
+            exit 0
             ;;
         5)
             kill_cfnat_process
