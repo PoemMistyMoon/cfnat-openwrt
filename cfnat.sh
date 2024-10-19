@@ -4,13 +4,14 @@ INSTALL_DIR="/root/cfnatop"
 CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
-RC_LOCAL_FILE="/etc/rc.local"  
+RC_LOCAL_FILE="/etc/rc.local"
 SCRIPT_PATH=$(readlink -f "$0")
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
-NC='\033[0m'  
+NC='\033[0m'
 
+MIRROR_PREFIX="https://p.goxo.us.kg/zxxc/https/"
 if [ ! -d "$INSTALL_DIR" ]; then
     echo -e "${GREEN}程序目录不存在，正在创建...${NC}"
     mkdir -p "$INSTALL_DIR"
@@ -104,9 +105,18 @@ download_file() {
         exit 1
     fi
 
-    if [ ! -f "$output_path" ]; then
-        echo -e "${RED}文件下载失败: $url${NC}"
-        exit 1
+    if [ ! -f "$output_path" ] || [ ! -s "$output_path" ]; then
+        echo -e "${YELLOW}文件下载失败或文件大小为0，使用镜像地址(使用clouflare代理)下载...${NC}"
+        local mirror_url="${MIRROR_PREFIX}${url#https://}"
+        if command -v wget > /dev/null; then
+            wget --no-check-certificate -O "$output_path" "$mirror_url"
+        elif command -v curl > /dev/null; then
+            curl -L "$mirror_url" -o "$output_path"
+        fi
+        if [ ! -f "$output_path" ] || [ ! -s "$output_path" ]; then
+            echo -e "${RED}使用镜像地址下载失败: $mirror_url${NC}"
+            exit 1
+        fi
     fi
 }
 
@@ -126,7 +136,7 @@ download_github_repo() {
             FILE_URL="https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat-linux-arm"
             ;;
         *)
-            echo -e "${RED}不支持的系统架构: $ARCH，~_~我承认了，不是不支持，就是单纯懒得放链接了，去下一个方法目录里面改名cfnat就可以用了${NC}"
+            echo -e "${RED}不支持的系统架构: $ARCH${NC}"
             exit 1
             ;;
     esac
@@ -136,7 +146,6 @@ download_github_repo() {
     echo -e "${GREEN}cfnat 主程序下载成功${NC}"
 }
 
-
 download_necessary_files() {
     download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v4.txt" "$INSTALL_DIR/ips-v4.txt"
     download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v6.txt" "$INSTALL_DIR/ips-v6.txt"
@@ -145,7 +154,7 @@ download_necessary_files() {
 }
 
 check_files() {
-    if [ ! -f "$CFNAT_BINARY" ] || [ ! -f "$INSTALL_DIR/ips-v4.txt" ] || [ ! -f "$INSTALL_DIR/ips-v6.txt" ]; then
+    if [ ! -f "$CFNAT_BINARY" ] || [ ! -s "$CFNAT_BINARY" ] || [ ! -f "$INSTALL_DIR/ips-v4.txt" ] || [ ! -s "$INSTALL_DIR/ips-v4.txt" ] || [ ! -f "$INSTALL_DIR/ips-v6.txt" ] || [ ! -s "$INSTALL_DIR/ips-v6.txt" ]; then
         echo -e "${YELLOW}未检测到主程序或必要文件，开始下载...${NC}"
         download_github_repo
         download_necessary_files
@@ -153,7 +162,6 @@ check_files() {
         echo -e "${YELLOW}主程序和必要文件已存在，跳过下载${NC}"
     fi
 }
-
 
 save_config() {
     echo "addr=127.0.0.1" > $CONFIG_FILE  
