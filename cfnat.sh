@@ -258,7 +258,7 @@ if [ -n "$colo" ]; then
     eval $cmd
 
     sleep 2  
-CFNAT_PID=$(pgrep -f "./cfnat")  
+CFNAT_PID=$(pgrep -f "./cfnat 127.0.0.1")  
 
 if [ -n "$CFNAT_PID" ]; then
     echo $CFNAT_PID > $PID_FILE  
@@ -307,8 +307,8 @@ show_current_config() {
     fi
 
 
-    if pgrep -f "./cfnat" > /dev/null; then
-        CFNAT_PID=$(pgrep -f "./cfnat") 
+    if pgrep -f "./cfnat 127.0.0.1" > /dev/null; then
+        CFNAT_PID=$(pgrep -f "./cfnat 127.0.0.1") 
         echo -e "${GREEN}cfnat 正在运行，PID: $CFNAT_PID${NC}"
         show_autostart_status 
         echo "========================"
@@ -408,7 +408,7 @@ kill_cfnat_process() {
             echo -e "${RED}没有找到运行中的 cfnat 进程跳过本操作${NC}"
         fi
     else
-        CFNAT_PID=$(pgrep -f "./cfnat")
+        CFNAT_PID=$(pgrep -f "./cfnat 127.0.0.1")
         if [ -n "$CFNAT_PID" ]; then
             kill "$CFNAT_PID"
             echo -e "${YELLOW}停止正在运行的cfnat${NC}"
