@@ -207,6 +207,7 @@ start_cfnat() {
         addr="127.0.0.1"
 
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效，回车继续${NC}"
+        echo -e "${YELLOW}如果你不知道参数的意义是什么，一路回车就行，使用默认配置${NC}"
         read -p "按回车继续... "
 
         read -p "请输入转发的目标端口 (默认: ${lport:-1234}): " lport
