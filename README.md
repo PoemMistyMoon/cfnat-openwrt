@@ -36,7 +36,7 @@ curl -fsSL https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cf
 ```
 剩下的不理解就一路回车就行了
 
-如果遇到SSL问题就使用下面这个（跳过证书验证，也许有风险?）
+如果你没有进入脚本主菜单，说明上面一键脚本用不了，试试下面的这两条
 ```
 curl -fsSLk https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh && chmod +x cfnat.sh && ./cfnat.sh
 ```
