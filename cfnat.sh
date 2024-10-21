@@ -164,7 +164,7 @@ check_files() {
 }
 
 save_config() {
-    echo "addr=127.0.0.1" > $CONFIG_FILE  
+    echo "addr=0.0.0.0" > $CONFIG_FILE  
     echo "lport=$lport" >> $CONFIG_FILE
     echo "forward_port=$forward_port" >> $CONFIG_FILE
     echo "code=$code" >> $CONFIG_FILE
@@ -204,7 +204,7 @@ start_cfnat() {
     get_lan_ip
     load_config
     if [ ! -f "$CONFIG_FILE" ]; then
-        addr="127.0.0.1"
+        addr="0.0.0.0"
 
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效，回车继续${NC}"
         echo -e "${YELLOW}如果你不知道参数的意义是什么，一路回车就行，使用默认配置${NC}"
@@ -272,9 +272,9 @@ fi
         echo -e "${GREEN}cfnat 已启动，PID: $(cat $PID_FILE)${NC}"
          echo "LAN 口的 IPv4 地址: $lan_ip"
          echo "lanip=$lan_ip" >> $CONFIG_FILE
-         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 和端口改成：127.0.0.1:$lport${NC}"
-         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 和端口改成：$lan_ip:$lport${NC}"
-         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
+        echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$lport${NC}"
+        echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$lport${NC}"
+        echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
     else
         echo -e "${RED}cfnat 启动失败，请检查配置或重试${NC}"
     fi
@@ -289,7 +289,7 @@ show_current_config() {
     else
         source "$CONFIG_FILE"
         echo -e "${GREEN}已安装：配置文件内容:${NC}"
-        echo "监听地址 (addr): 127.0.0.1"
+        echo "监听地址 (addr): 0.0.0.0"
         echo "监听端口 (lport): $lport"
         echo "转发端口 (forward_port): $forward_port"
         echo "HTTP/HTTPS 响应状态码 (code): $code"
