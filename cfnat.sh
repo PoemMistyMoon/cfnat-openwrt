@@ -372,8 +372,19 @@ main_menu() {
              rm -rf "$INSTALL_DIR/locations.json"
              rm -rf "$CFNAT_BINARY"
              echo -e "${GREEN}正在清楚旧版程序...，即将更新${NC}"
+             echo -e "${GREEN}正在更新脚本...${NC}"
+             rm -f "$0"
+    
+             if ! curl -fsSLk https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh; then
+             echo -e "${RED}主地址下载失败，正在尝试镜像地址...${NC}"
+             if ! curl -fsSLk https://p.goxo.us.kg/zxxc/https/raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/cfnat.sh -o cfnat.sh; then
+            echo -e "${RED}镜像地址下载失败，请检查网络或地址。${NC}"
+            exit 1
+            fi
+            fi
+            chmod +x cfnat.sh
             check_files
-            start_cfnat
+            bash cfnat.sh
              ;;
         6)
             enable_autostart
