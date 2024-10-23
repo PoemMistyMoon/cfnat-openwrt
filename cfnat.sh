@@ -277,6 +277,7 @@ fi
         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$lport${NC}"
         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$lport${NC}"
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
+        echo -e "${YELLOW}启动后不是立刻能用，cfnat优选IP需要时间，根据你的配置一般需要1-2分钟后可以正常使用${NC}"
     else
         echo -e "${RED}cfnat 启动失败，请检查配置或重试${NC}"
     fi
@@ -318,6 +319,7 @@ show_current_config() {
         echo -e "${YELLOW}如果你在本机运行了代理插件，请把你的 CF 节点 IP 修改为：127.0.0.1 端口修改为：$lport${NC}"
         echo -e "${YELLOW}如果你在其他设备运行代理插件，请把你的 CF 节点 IP 修改为：$lanip 端口修改为：$lport${NC}"
         echo -e "${YELLOW}如果你需要在本机同时运行cfnat和代理插件，请关闭代理插件的代理本机功能，否则cfnat无效${NC}"
+        echo -e "${YELLOW}启动后不是立刻能用，cfnat优选IP需要时间，根据你的配置一般需要1-2分钟后可以正常使用${NC}"
     else
         echo -e "${RED}cfnat 未运行${NC}"
     fi
