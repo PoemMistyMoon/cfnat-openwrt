@@ -4,6 +4,8 @@ INSTALL_DIR="/root/cfnatop"
 CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
+VERSION_FILE="$INSTALL_DIR/version.txt" 
+REMOTE_VERSION_URL="https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/refs/heads/main/version.txt"
 RC_LOCAL_FILE="/etc/rc.local"
 SCRIPT_PATH=$(readlink -f "$0")
 RED='\033[0;31m'
@@ -155,11 +157,11 @@ download_necessary_files() {
 
 check_files() {
     if [ ! -f "$CFNAT_BINARY" ] || [ ! -s "$CFNAT_BINARY" ] || [ ! -f "$INSTALL_DIR/ips-v4.txt" ] || [ ! -s "$INSTALL_DIR/ips-v4.txt" ] || [ ! -f "$INSTALL_DIR/ips-v6.txt" ] || [ ! -s "$INSTALL_DIR/ips-v6.txt" ]; then
-        echo -e "${YELLOW}未检测到主程序或必要文件，开始下载...${NC}"
+        echo -e "${YELLOW}正在进行安装/更新cfnat...${NC}"
         download_github_repo
         download_necessary_files
     else
-        echo -e "${YELLOW}主程序和必要文件已存在，跳过下载${NC}"
+        echo -e "${YELLOW}运行中...${NC}"
     fi
 }
 
@@ -326,17 +328,22 @@ main_menu() {
     show_current_config
     echo "========================"
     echo -e "${GREEN}脚本作者：PoemMistyMoon${NC}"
+    check_version
     echo "========================"
-    echo "1. 启动 cfnat"
-    echo "2. 安装 cfnat"
-    echo "3. 修改参数"
-    echo "4. 卸载 cfnat"
-    echo "5. 停止 cfnat"
-    echo "6. 启用开机自启"
-    echo "7. 禁用开机自启"
-    echo "8. 恢复默认配置"
-    echo "0. 退出脚本"
-    echo "请选择一个选项 [0-8]: "
+    echo "${GREEN}1. 启动/安装 cfnat${NC}"
+    echo "${GREEN}2. 停止 cfnat${NC}"
+    echo "${GREEN}3. 修改参数${NC}"
+    echo "========================"
+    echo "${GREEN}4. 卸载 cfnat${NC}"
+    echo "${GREEN}5. 更新 cfnat${NC}"
+    echo "========================"
+    echo "${GREEN}6. 启用开机自启${NC}"
+    echo "${GREEN}7. 禁用开机自启${NC}"
+    echo "========================"
+    echo "${GREEN}8. 恢复默认配置${NC}"
+    echo "========================"
+    echo "${GREEN}0. 退出脚本${NC}"
+    echo "${GREEN}请选择一个选项 [0-9]: ${NC}"
 
     read choice
     case $choice in
@@ -346,9 +353,9 @@ main_menu() {
             exit 0
             ;;
         2)
-            check_files
-            start_cfnat
-            exit 0
+            kill_cfnat_process
+            sleep 1
+            main_menu
             ;;
         3)
             modify_config
@@ -359,10 +366,15 @@ main_menu() {
             exit 0
             ;;
         5)
-            kill_cfnat_process
-            sleep 1
-            main_menu
-            ;;
+             kill $(cat "$PID_FILE")  
+             rm -rf "$INSTALL_DIR/ips-v4.txt"
+             rm -rf "$INSTALL_DIR/ips-v6.txt"
+             rm -rf "$INSTALL_DIR/locations.json"
+             rm -rf "$CFNAT_BINARY"
+             echo -e "${GREEN}正在清楚旧版程序...，即将更新${NC}"
+            check_files
+            start_cfnat
+             ;;
         6)
             enable_autostart
             main_menu
@@ -424,7 +436,19 @@ kill_cfnat_process() {
     fi
 }
 
+check_version() {
+    REMOTE_VERSION=$(curl -s https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/refs/heads/main/version.txt)
 
+    if [ $? -ne 0 ]; then
+        REMOTE_VERSION=$(curl -s "https://p.goxo.us.kg/zxxc/https/raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/refs/heads/main/version.txt")
+    fi
+
+    LOCAL_VERSION=$(cat "$INSTALL_DIR/version.txt" 2>/dev/null)
+
+    if [ "$REMOTE_VERSION" != "$LOCAL_VERSION" ]; then
+        echo -e "${YELLOW} 版本不一致! 本地版本: $LOCAL_VERSION, 远程版本: $REMOTE_VERSION${NC}，请更新cfnat"
+    fi
+}
 
 if [ "$1" == "start" ]; then
     check_files
