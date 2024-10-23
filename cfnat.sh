@@ -450,7 +450,7 @@ check_version() {
     LOCAL_VERSION=$(cat "$INSTALL_DIR/version.txt" 2>/dev/null)
 
     if [ "$REMOTE_VERSION" != "$LOCAL_VERSION" ]; then
-        echo -e "${YELLOW} 版本不一致! 本地版本: $LOCAL_VERSION, 远程版本: $REMOTE_VERSION${NC}，请更新cfnat"
+        echo -e "${YELLOW} 版本不一致! 本地版本: $LOCAL_VERSION, 远程版本: $REMOTE_VERSION，请更新cfnat${NC}"
     fi
 }
 
