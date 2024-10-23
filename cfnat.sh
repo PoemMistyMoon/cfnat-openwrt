@@ -366,7 +366,8 @@ main_menu() {
             exit 0
             ;;
         5)
-             kill $(cat "$PID_FILE")  
+             kill $(cat "$PID_FILE")
+             rm -f "$PID_FILE"
              rm -rf "$INSTALL_DIR/ips-v4.txt"
              rm -rf "$INSTALL_DIR/ips-v6.txt"
              rm -rf "$INSTALL_DIR/locations.json"
