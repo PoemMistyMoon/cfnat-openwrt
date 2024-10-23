@@ -423,7 +423,7 @@ kill_cfnat_process() {
             rm -f "$PID_FILE"
             echo -e "${YELLOW}停止正在运行的cfnat${NC}"
         else
-            echo -e "${RED}没有找到运行中的 cfnat 进程跳过本操作${NC}"
+            echo -e "${YELLOW}没有找到运行中的 cfnat 进程跳过本操作${NC}"
         fi
     else
         CFNAT_PID=$(pgrep -f "./cfnat -addr")
@@ -431,7 +431,7 @@ kill_cfnat_process() {
             kill "$CFNAT_PID"
             echo -e "${YELLOW}停止正在运行的cfnat${NC}"
         else
-            echo -e "${RED}没有找到运行中的 cfnat 进程跳过本操作${NC}"
+            echo -e "${YELLOW}没有找到运行中的 cfnat 进程跳过本操作${NC}"
         fi
     fi
 }
