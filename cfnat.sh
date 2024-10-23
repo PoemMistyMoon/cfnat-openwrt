@@ -5,7 +5,6 @@ CONFIG_FILE="$INSTALL_DIR/cfnat.conf"
 PID_FILE="$INSTALL_DIR/cfnat.pid"
 CFNAT_BINARY="$INSTALL_DIR/cfnat"
 VERSION_FILE="$INSTALL_DIR/version.txt" 
-REMOTE_VERSION_URL="https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/refs/heads/main/version.txt"
 RC_LOCAL_FILE="/etc/rc.local"
 SCRIPT_PATH=$(readlink -f "$0")
 RED='\033[0;31m'
@@ -291,20 +290,20 @@ show_current_config() {
     else
         source "$CONFIG_FILE"
         echo -e "${GREEN}已安装：配置文件内容:${NC}"
-        echo "监听地址 (addr): 0.0.0.0"
-        echo "监听端口 (lport): $lport"
-        echo "转发端口 (forward_port): $forward_port"
-        echo "HTTP/HTTPS 响应状态码 (code): $code"
-        echo "筛选数据中心 (colo): ${colo:-未设置}"
-        echo "有效延迟 (delay): $delay"
-        echo "响应状态码检查的域名 (domain): $domain"
-        echo "提取的有效IP数量 (ipnum): $ipnum"
-        echo "生成 IPv4 或 IPv6 地址 (ips): $ips"
-        echo "目标负载 IP 数量 (num): $num"
-        echo "是否随机生成IP (random): $random"
-        echo "并发请求最大协程数 (task): $task"
-        echo "是否为 TLS 端口 (tls): $tls"
-        echo "LAN 连接地址: $lanip:$lport"
+        echo -e "${GREEN}监听地址 (addr): 0.0.0.0${NC}"
+        echo -e "${GREEN}监听端口 (lport): ${NC}$lport"
+        echo -e "${GREEN}转发端口 (forward_port): ${NC}$forward_port"
+        echo -e "${GREEN}HTTP/HTTPS 响应状态码 (code): ${NC}$code"
+        echo -e "${GREEN}筛选数据中心 (colo): ${NC}${colo:-未设置}"
+        echo -e "${GREEN}有效延迟 (delay): ${NC}$delay"
+        echo -e "${GREEN}响应状态码检查的域名 (domain): ${NC}$domain"
+        echo -e "${GREEN}提取的有效IP数量 (ipnum): ${NC}$ipnum"
+        echo -e "${GREEN}生成 IPv4 或 IPv6 地址 (ips): ${NC}$ips"
+        echo -e "${GREEN}目标负载 IP 数量 (num): ${NC}$num"
+        echo -e "${GREEN}是否随机生成IP (random): ${NC}$random"
+        echo -e "${GREEN}并发请求最大协程数 (task): ${NC}$task"
+        echo -e "${GREEN}是否为 TLS 端口 (tls): ${NC}$tls"
+        echo -e "${GREEN}LAN 连接地址: ${NC}$lanip:$lport"
         echo "========================"
         
     fi
@@ -330,20 +329,20 @@ main_menu() {
     echo -e "${GREEN}脚本作者：PoemMistyMoon${NC}"
     check_version
     echo "========================"
-    echo "${GREEN}1. 启动/安装 cfnat${NC}"
-    echo "${GREEN}2. 停止 cfnat${NC}"
-    echo "${GREEN}3. 修改参数${NC}"
+    echo -e "${GREEN}1. 启动/安装 cfnat${NC}"
+    echo -e "${GREEN}2. 停止 cfnat${NC}"
+    echo -e "${GREEN}3. 修改参数${NC}"
     echo "========================"
-    echo "${GREEN}4. 卸载 cfnat${NC}"
-    echo "${GREEN}5. 更新 cfnat${NC}"
+    echo -e "${GREEN}4. 卸载 cfnat${NC}"
+    echo -e "${GREEN}5. 更新 cfnat${NC}"
     echo "========================"
-    echo "${GREEN}6. 启用开机自启${NC}"
-    echo "${GREEN}7. 禁用开机自启${NC}"
+    echo -e "${GREEN}6. 启用开机自启${NC}"
+    echo -e "${GREEN}7. 禁用开机自启${NC}"
     echo "========================"
-    echo "${GREEN}8. 恢复默认配置${NC}"
+    echo -e "${GREEN}8. 恢复默认配置${NC}"
     echo "========================"
-    echo "${GREEN}0. 退出脚本${NC}"
-    echo "${GREEN}请选择一个选项 [0-9]: ${NC}"
+    echo -e "${GREEN}0. 退出脚本${NC}"
+    echo -e "${GREEN}请选择一个选项 [0-9]: ${NC}"
 
     read choice
     case $choice in
@@ -442,7 +441,11 @@ check_version() {
     if [ $? -ne 0 ]; then
         REMOTE_VERSION=$(curl -s "https://p.goxo.us.kg/zxxc/https/raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/refs/heads/main/version.txt")
     fi
-
+    
+    if [ ! -f "$INSTALL_DIR/version.txt" ]; then
+        return  
+    fi
+    
     LOCAL_VERSION=$(cat "$INSTALL_DIR/version.txt" 2>/dev/null)
 
     if [ "$REMOTE_VERSION" != "$LOCAL_VERSION" ]; then
