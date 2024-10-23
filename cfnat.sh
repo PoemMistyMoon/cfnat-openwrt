@@ -151,6 +151,7 @@ download_necessary_files() {
     download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v4.txt" "$INSTALL_DIR/ips-v4.txt"
     download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/ips-v6.txt" "$INSTALL_DIR/ips-v6.txt"
     download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/main/locations.json" "$INSTALL_DIR/locations.json"
+    download_file "https://raw.githubusercontent.com/PoemMistyMoon/cfnat-openwrt/refs/heads/main/version.txt" "$INSTALL_DIR/version.txt"
     echo -e "${GREEN}必要的文件下载成功${NC}"
 }
 
